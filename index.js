@@ -1,20 +1,13 @@
-const path = require('path');
-const dotenv = require('dotenv');
 const { Client } = require('pg');
+const config = require('./config/config');
 
-
-const env = process.env.NODE_ENV || 'dev';
-const envFile = `.env.${env}`;
-dotenv.config({
-  path: path.resolve(__dirname, envFile),
-});
 
 const client = new Client({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  host: config.db.host,
+  port: config.db.port,
+  database: config.db.name,
+  user: config.db.user,
+  password: config.db.password,
 });
 const getUsers = async () => {
   try {
@@ -39,12 +32,12 @@ const createUser = async (name, email) => {
 
 client.connect()
   .then(async () => {
-    console.log(`Connected using ${env} environment`);
+    console.log(`Connected using ${config.env} environment`);
     await createUser('John Doe', 'john@example.com');
     await getUsers();
     await client.end();
   })
   .catch((err) => {
-    console.error(`Failed to connect using ${env} environment`);
+    console.error(`Failed to connect using ${config.env} environment`);
     console.error(err.message);
   });
