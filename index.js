@@ -24,10 +24,23 @@ const getUsers = async () => {
     console.error('Error fetching users:', err.message);
   }
 };
+const createUser = async (name, email) => {
+  try {
+    const result = await client.query(
+      'INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *',
+      [name, email]
+    );
+
+    console.log('User created:', result.rows[0]);
+  } catch (err) {
+    console.error('Error creating user:', err.message);
+  }
+};
 
 client.connect()
   .then(async () => {
     console.log(`Connected using ${env} environment`);
+    await createUser('John Doe', 'john@example.com');
     await getUsers();
     await client.end();
   })
